@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-order-service
+spec:
+  selector:
+    app: order-container
+  ports:
+  - protocol: TCP
+    port: 22222
+    targetPort: 22222

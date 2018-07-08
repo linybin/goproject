@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+  labels:
+    app: labelApp
+spec:
+  containers:
+  - name: web-container
+    image: linybin/web
+    ports:
+    - containerPort: 8080

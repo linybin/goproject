@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-web-service
+spec:
+  selector:
+    app: testWebApp
+  ports:
+  - protocol: TCP
+    port: 2222
+    targetPort: 8080
+  type: LoadBalancer
