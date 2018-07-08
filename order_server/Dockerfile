@@ -5,6 +5,6 @@ RUN go get google.golang.org/grpc
 RUN go get github.com/linybin/goproject
 WORKDIR /go/src/github.com/linybin/goproject/order_server
 EXPOSE 8080
-CMD ["go", "run", "main.go"]
+#CMD ["go", "run", "main.go"]
 #RUN go build -o main .
 #CMD ["/app/main"]

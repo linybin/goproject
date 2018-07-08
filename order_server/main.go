@@ -5,8 +5,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
-
-	pb "protocs"
+	pb "github.com/linybin/goproject/protos/order"
 
 	"fmt"
 	"google.golang.org/grpc/reflection"
@@ -20,8 +19,7 @@ type server struct {
 func (s *server) GetOrder(ctx context.Context, request *pb.GetOrderRequest) (*pb.Order, error) {
 	fmt.Println("we want to get order")
 	order_id := request.Id
-	return &pb.Order{
-		UserId: "2323",
+	return &pb.Order{		UserId: "2323",
 		Id:     order_id,
 		From:   "Hong Kong",
 		To:     "China",
