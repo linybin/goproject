@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+message Order {
+    string UserId =1;
+    int32 Id =2;
+    string From =3;
+    string  to=4;
+    uint64 Lat =5;
+    uint64 Long =6;
+    string status =7;
+
+}
+
+service OrderService{
+    rpc GetOrder(GetOrderRequest) returns (Order);
+    rpc CreateOrder(Order) returns (CreateOrderResponse);
+
+}
+
+message CreateOrderResponse{
+    bool success = 1;
+}
+message GetOrderRequest {
+    int32 Id = 1;
+}
+
