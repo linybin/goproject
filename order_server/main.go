@@ -30,6 +30,9 @@ func (s *server) GetOrder(ctx context.Context, request *pb.GetOrderRequest) (*pb
 }
 
 func (s *server) CreateOrder(ctx context.Context, request *pb.Order) (*pb.CreateOrderResponse, error) {
+	fmt.Println("We want to create order")
+	//save the order into database
+
 	return &pb.CreateOrderResponse{Success: true}, nil
 }
 

@@ -31,14 +31,42 @@ func main() {
 	fmt.Println("start the http server ..")
 	http.HandleFunc("/", listOfOptions)
 	http.HandleFunc("/order", getOrderThroughGRPC)
+
 	http.HandleFunc("/order/22/get", getOrder)
 	http.HandleFunc("/placeOrder", placeOrder)
 	http.HandleFunc("/get_price", getPrice)
+	http.HandleFunc("/createOrder", createOrder)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 
 	}
+}
+func createOrder(writer http.ResponseWriter, request *http.Request) {
+	path := html.EscapeString(request.URL.Path)
+	log.Println("request from" + path)
+	log.Println("Handler create order started ")
+	defer log.Println("Handler stop ")
+
+	conn, err := grpc.Dial("my-order-service:22222", grpc.WithInsecure())
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer conn.Close()
+	c := order.NewOrderServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	or, err := c.CreateOrder(ctx, &order.Order{UserId: "222", Id: 22, From: "df", To: "23", Long: 33, Lat: 33, Status: "pending"})
+	if err != nil {
+
+		http.Error(writer, err.Error(), 500)
+		return
+	}
+	json.NewEncoder(writer).Encode(or)
+
+
+
 }
 func getPrice(writer http.ResponseWriter, request *http.Request) {
 	path := html.EscapeString(request.URL.Path)
@@ -85,7 +113,6 @@ func listOfOptions(writer http.ResponseWriter, request *http.Request) {
 	t.Execute(writer, mainstruct{})
 
 }
-
 
 func getOrderThroughGRPC(writer http.ResponseWriter, request *http.Request) {
 	path := html.EscapeString(request.URL.Path)
