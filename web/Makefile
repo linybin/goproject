@@ -5,4 +5,4 @@ run:
 
 package:
 	cp -r ../protos ./
-	docker build -t linybin/web .
+	docker build -t linybin/web:v1.3 .

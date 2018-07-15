@@ -13,6 +13,7 @@ const version = "v1"
 
 
 func main(){
+	log.Println("Pricing service starts")
 	os.Setenv("port", ":8080")
 
 	port, err := getEnv("port")
@@ -28,7 +29,9 @@ func main(){
 
 	}
 }
-func price(writer http.ResponseWriter, _ *http.Request) {
+func price(writer http.ResponseWriter, request *http.Request) {
+	path := request.URL.Path
+	log.Println("request from ", path)
 	log.Println("Handler started ")
 	defer log.Println("Handler stop ")
 

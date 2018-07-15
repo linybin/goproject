@@ -48,7 +48,7 @@ func getPrice(writer http.ResponseWriter, request *http.Request) {
 	var netCLient = &http.Client{
 		Timeout: time.Second * 5,
 	}
-	response, err := netCLient.Get("http://pricingservice")
+	response, err := netCLient.Get("http://my-pricing-service")
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
@@ -101,7 +101,7 @@ func getOrderThroughGRPC(writer http.ResponseWriter, request *http.Request) {
 	id_32 := int32(id)
 
 	fmt.Println("get order through grpc")
-	conn, err := grpc.Dial("localhost:4444", grpc.WithInsecure())
+	conn, err := grpc.Dial("my-order-service:22222", grpc.WithInsecure())
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return

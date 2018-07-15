@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: web
-        image: linybin/web
+        image: linybin/web:v1.3
         ports:
         - containerPort: 8080

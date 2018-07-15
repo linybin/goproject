@@ -9,14 +9,14 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: order-container
+      app: order-app
   template:
     metadata:
       labels:
-        app: order-container
+        app: order-app
     spec:
       containers:
       - name: order
-        image: linybin/order_server:1
+        image: linybin/order_server:1.1
         ports:
         - containerPort: 22222

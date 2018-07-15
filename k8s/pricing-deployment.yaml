@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: pricing-app
-        image: linybin/pricing
+        image: linybin/pricing:v1.3
         ports:
         - containerPort: 8080

@@ -4,9 +4,8 @@ metadata:
   name: my-pricing-service
 spec:
   selector:
-    app: pricing-app
+    app: pricingApp
   ports:
   - protocol: TCP
     port: 80
     targetPort: 8080
-  type: NodePort
