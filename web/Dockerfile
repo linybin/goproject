@@ -20,15 +20,9 @@ RUN go get google.golang.org/grpc
 # Install protoc-gen-go
 RUN go get github.com/golang/protobuf/protoc-gen-go
 
-
-WORKDIR /go/src/github.com/linybin/goproject/
-COPY ./protos/ ./protos/
+RUN go get github.com/linybin/goproject
 WORKDIR /go/src/github.com/linybin/goproject/web
-COPY . .
-
-EXPOSE 8080
-
-
+copy . .
 CMD ["go", "run", "main.go"]
 #RUN go build -o main .
 #CMD ["/app/main"]

@@ -11,57 +11,114 @@ import (
 	"log"
 	"strconv"
 	"time"
+	"html/template"
+	"os"
+	"io/ioutil"
+	"html"
+	"path/filepath"
+
 )
 
-const (
-	portRPC = ":50051"
-)
 
-func mainPage(w http.ResponseWriter, r *http.Request) {
-	message := "handler the test a"
-	w.Write([]byte(message))
-}
 
 func main() {
-
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("cnanot find url ")
+		os.Exit(1)
+	}
+	fmt.Println("current directory is " + cwd)
 	fmt.Println("start the http server ..")
-	http.HandleFunc("/test", getOrderThroughGRPC)
+	http.HandleFunc("/", listOfOptions)
+	http.HandleFunc("/order", getOrderThroughGRPC)
 	http.HandleFunc("/order/22/get", getOrder)
 	http.HandleFunc("/placeOrder", placeOrder)
+	http.HandleFunc("/get_price", getPrice)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 
 	}
 }
+func getPrice(writer http.ResponseWriter, request *http.Request) {
+	path := html.EscapeString(request.URL.Path)
+	log.Println("request from" + path)
+	log.Println("Handler started ")
+	defer log.Println("Handler stop ")
+	var netCLient = &http.Client{
+		Timeout: time.Second * 5,
+	}
+	response, err := netCLient.Get("http://pricingservice")
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+	}
+
+	writer.Write(body)
+
+}
+
+type mainstruct struct {
+}
+
+func listOfOptions(writer http.ResponseWriter, request *http.Request) {
+	path := html.EscapeString(request.URL.Path)
+	log.Println("request from" + path)
+	log.Println("Handler started ")
+	defer log.Println("Handler stop ")
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	t, err := template.ParseFiles(filepath.Join(wd, "/main.html"))
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	t.Execute(writer, mainstruct{})
+
+}
+
+
 func getOrderThroughGRPC(writer http.ResponseWriter, request *http.Request) {
+	path := html.EscapeString(request.URL.Path)
+	log.Println("request from" + path)
+	log.Println("Handler started ")
+	defer log.Println("Handler stop ")
 	id_string := request.URL.Query().Get("id")
 	id, err := strconv.Atoi(id_string)
 	if err != nil {
 		//return with error
-		http.Error(writer, "id is wrong", 422)
 		return
 	}
 	id_32 := int32(id)
 
 	fmt.Println("get order through grpc")
-	conn, err := grpc.Dial("localhost:22222", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:4444", grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("error occurred %v", err)
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	defer conn.Close()
 	c := order.NewOrderServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	order, err := c.GetOrder(ctx, &order.GetOrderRequest{Id: id_32})
+	or, err := c.GetOrder(ctx, &order.GetOrderRequest{Id: id_32})
 	if err != nil {
 
-		http.Error(writer, "grpc server down", 500)
+		http.Error(writer, err.Error(), 500)
 		return
 	}
-	json.NewEncoder(writer).Encode(order)
+	json.NewEncoder(writer).Encode(or)
 }
-func placeOrder(writer http.ResponseWriter, request *http.Request) {
+func placeOrder(writer http.ResponseWriter, _ *http.Request) {
 	orderId := "222"
 	fmt.Fprintf(writer, "try to place the order %v", orderId)
 	//get the order info, save into db and push to event queue
@@ -77,8 +134,8 @@ type Order struct {
 	status string
 }
 
-func getOrder(w http.ResponseWriter, r *http.Request) {
-	order := Order{"UX-2382", 22, "tin", "ah", 233, 232, "pending"}
-	json.NewEncoder(w).Encode(order)
+func getOrder(w http.ResponseWriter, _ *http.Request) {
+	order_item := Order{"UX-2382", 22, "tin", "ah", 233, 232, "pending"}
+	json.NewEncoder(w).Encode(order_item)
 
 }
