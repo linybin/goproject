@@ -36,11 +36,21 @@ func main() {
 	http.HandleFunc("/placeOrder", placeOrder)
 	http.HandleFunc("/get_price", getPrice)
 	http.HandleFunc("/createOrder", createOrder)
+	http.HandleFunc("/location", placeLocation)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 
 	}
+}
+func placeLocation(writer http.ResponseWriter, request *http.Request) {
+	pat := request.URL.Path
+	log.Println("request from " + pat)
+	defer log.Println("request done ")
+	message := "test"
+	writer.Write([]byte(message))
+
+
 }
 func createOrder(writer http.ResponseWriter, request *http.Request) {
 	path := html.EscapeString(request.URL.Path)
